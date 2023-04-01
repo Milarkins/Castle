@@ -1,0 +1,73 @@
+[gd_scene load_steps=6 format=3 uid="uid://bex7s7bb8lgwy"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_wk1wo"]
+[ext_resource type="Texture2D" uid="uid://dv2cbqxyt7y65" path="res://test.png" id="2_36qa6"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mpm3l"]
+radius = 61.0
+height = 128.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_177jc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hwynk"]
+
+[node name="Player" type="CharacterBody2D"]
+scale = Vector2(0.7, 0.7)
+script = ExtResource("1_wk1wo")
+standing_speed = 250.0
+crouching_speed = 50.0
+airborne_speed = 200.0
+jump_height = 75.0
+jump_time_to_peak = 0.3
+jump_time_to_descent = 0.25
+dive_force = 500.0
+wall_descent_speed = 150.0
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_mpm3l")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.245714, 0.257143)
+texture = ExtResource("2_36qa6")
+
+[node name="Wallcast" type="Node2D" parent="."]
+visible = false
+
+[node name="Left" type="Area2D" parent="Wallcast"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wallcast/Left"]
+position = Vector2(-75, 0)
+shape = SubResource("CircleShape2D_177jc")
+
+[node name="Right" type="Area2D" parent="Wallcast"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wallcast/Right"]
+position = Vector2(75, 0)
+shape = SubResource("CircleShape2D_hwynk")
+
+[node name="Timers" type="Node2D" parent="."]
+
+[node name="CoyoteTimer" type="Timer" parent="Timers"]
+wait_time = 0.2
+one_shot = true
+
+[node name="DiveTimer" type="Timer" parent="Timers"]
+one_shot = true
+
+[node name="StateLabel" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -61.0
+offset_top = -91.0
+offset_right = 61.0
+offset_bottom = -68.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="body_entered" from="Wallcast/Left" to="." method="_on_left_body_entered"]
+[connection signal="body_exited" from="Wallcast/Left" to="." method="_on_left_body_exited"]
+[connection signal="body_entered" from="Wallcast/Right" to="." method="_on_right_body_entered"]
+[connection signal="body_exited" from="Wallcast/Right" to="." method="_on_right_body_exited"]
