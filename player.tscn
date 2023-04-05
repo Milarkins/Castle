@@ -12,7 +12,7 @@ height = 128.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_hwynk"]
 
 [node name="Player" type="CharacterBody2D"]
-scale = Vector2(0.7, 0.7)
+scale = Vector2(0.4, 0.4)
 script = ExtResource("1_wk1wo")
 standing_speed = 250.0
 crouching_speed = 50.0
@@ -21,7 +21,7 @@ jump_height = 75.0
 jump_time_to_peak = 0.3
 jump_time_to_descent = 0.25
 dive_force = 500.0
-wall_descent_speed = 150.0
+wall_descent_speed = 125.0
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_mpm3l")
@@ -51,19 +51,18 @@ shape = SubResource("CircleShape2D_hwynk")
 wait_time = 0.2
 one_shot = true
 
-[node name="DiveTimer" type="Timer" parent="Timers"]
-one_shot = true
-
 [node name="StateLabel" type="Label" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -61.0
-offset_top = -91.0
-offset_right = 61.0
-offset_bottom = -68.0
+offset_left = -97.5
+offset_top = -117.5
+offset_right = 24.5
+offset_bottom = -91.5
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.6, 1.6)
+text = "dddddddddddd"
 horizontal_alignment = 1
 vertical_alignment = 1
 
