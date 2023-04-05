@@ -7,7 +7,6 @@ var dive_direction : float
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_time_to_peak * jump_time_to_peak)) * -1.0
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_time_to_descent * jump_time_to_descent)) * -1.0
 @onready var c_timer = $Timers/CoyoteTimer
-@onready var d_timer = $Timers/DiveTimer
 
 #exported variables
 @export var standing_speed : float
@@ -26,7 +25,8 @@ enum states {
 	airborne,
 	diving,
 	wall_sliding,
-	wall_jumping
+	wall_jumping,
+	hit_head
 }
 
 #state variables
@@ -39,7 +39,6 @@ var on_right_wall : bool
 var wall_jump_dir : int
 var is_wall_jumping : bool
 var can_jump : bool
-var can_dive : bool
 var is_facing_right : bool = true
 
 func _process(delta):
@@ -60,7 +59,7 @@ func _process(delta):
 	else:
 		if !is_diving:
 			current_state = states.airborne
-		if Input.is_action_just_pressed("Act") and can_dive:
+		if Input.is_action_just_pressed("Act"):
 			current_state = states.diving
 			is_diving = true
 	if c_timer.time_left <= 0:
@@ -68,22 +67,19 @@ func _process(delta):
 	else:
 		can_jump = true
 	if can_jump:
-		if Input.is_action_pressed("Jump") and current_state != states.crouching:
+		if Input.is_action_just_pressed("Jump") and current_state != states.crouching:
 			current_state = states.jumping
-
-	if d_timer.is_stopped() and Input.is_action_just_pressed("Act") and !is_on_floor():
-		d_timer.start()
-	if d_timer.time_left <= 0:
-		can_dive = true
-	else:
-		can_dive = false
 
 	if is_on_wall_only():
 		current_state = states.wall_sliding
 	if is_on_wall_only() and Input.is_action_just_pressed("Jump"):
 		current_state = states.wall_jumping
 
-	ChangeDirection()
+	if is_on_ceiling():
+		current_state = states.hit_head
+
+	if !is_diving:
+		ChangeDirection()
 
 	#state logic
 	match current_state:
@@ -137,7 +133,11 @@ func _process(delta):
 			if on_right_wall:
 				wall_jump_dir = 1
 			input_vector.y = jump_velocity
-			input_vector.x = wall_jump_dir * airborne_speed 
+			input_vector.x = wall_jump_dir * airborne_speed
+
+		states.hit_head:
+			input_vector.y = fall_gravity /20
+			$StateLabel.text = "hit head" #debug
 
 func get_dive_dir():
 	if is_facing_right:
